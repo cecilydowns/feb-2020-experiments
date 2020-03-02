@@ -1,13 +1,13 @@
-import React, { useReducer, useState, useEffect, useRef } from "react";
+import React, { Suspense, useReducer, useEffect, useRef } from "react";
 import { getPosts } from "./api";
 import "./App.scss";
-
 import UnmountHiddenWrapper from "./UnmountHiddenWrapper";
 import PostItem from "./PostItem";
-
+import Loading from "./Loading";
 import { reducer, initialState } from "./reducer";
-
 import { Post } from "./types";
+const ErrorMessage = React.lazy(() => import("./ErrorMessage"));
+const PostEndMessage = React.lazy(() => import("./PostEndMessage"));
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -53,10 +53,14 @@ function App() {
         </UnmountHiddenWrapper>
       ))}
       <div ref={loadingRef} className="message">
-        {state.loading && "Loading..."}
+        {state.loading && <Loading />}
       </div>
-      {state.end && <div className="message">No more posts to show!</div>}
-      {state.error && <div className="message error">{state.error}</div>}
+      <Suspense fallback={<Loading />}>
+        {state.end && <PostEndMessage />}
+      </Suspense>
+      <Suspense fallback={<Loading />}>
+        {state.error && <ErrorMessage error={state.error} />}
+      </Suspense>
     </div>
   );
 }
