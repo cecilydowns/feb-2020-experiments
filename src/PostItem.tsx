@@ -9,7 +9,19 @@ interface Props {
 }
 
 const PostItem = ({ createdAt, author, avatar, title, body }: Props) => {
-  return <div>Post item!!!</div>;
+  return (
+    <div className="post-item-wrapper">
+      <h2>{title}</h2>
+      <div className="body-text">{body}</div>
+      <div className="avatar">
+        <div className="author">
+          <span className="posted-by">Author</span>
+          {author}
+        </div>
+        <img src={avatar} alt={author} />
+      </div>
+    </div>
+  );
 };
 
 export default PostItem;
