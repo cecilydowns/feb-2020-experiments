@@ -1,56 +1,47 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useReducer, useState, useEffect, useRef } from "react";
 import { getPosts } from "./api";
 import "./App.scss";
 
 import UnmountHiddenWrapper from "./UnmountHiddenWrapper";
 import PostItem from "./PostItem";
 
+import { reducer, initialState } from "./reducer";
+
 import { Post } from "./types";
 
 function App() {
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const loadingRef = useRef<HTMLDivElement>(null);
 
-  const loadMorePosts = () => {
-    if (!loading) {
-      setLoading(true);
-      getPosts(page, 5).then(res => {
-        setLoading(false);
-        setPosts(prevState => {
-          return [...prevState, res];
-        });
-      });
-    }
-    console.log("loading more posts!!!");
-  };
-
   useEffect(() => {
-    if (loadingRef && loadingRef.current) {
-      const callback = (entries: any) => {
-        entries.forEach((entry: any) => {
-          if (entry.intersectionRatio * 100 > 0) {
-            loadMorePosts();
-          }
-        });
-      };
-
-      const observer = new IntersectionObserver(callback, {
-        rootMargin: "750px 0px",
-        threshold: [1]
-      });
+    if (loadingRef && loadingRef.current && !state.loading && !state.end) {
+      const observer = new IntersectionObserver(
+        (entries: any) => {
+          entries.forEach((entry: any) => {
+            if (entry.intersectionRatio === 1) {
+              getPosts(dispatch, state.nextPage, 5);
+              if (loadingRef.current !== null) {
+                observer.unobserve(loadingRef.current);
+              }
+            }
+          });
+        },
+        {
+          rootMargin: "250px 0px",
+          threshold: [1]
+        }
+      );
 
       observer.observe(loadingRef.current);
     }
-  }, []);
+  }, [dispatch, state.nextPage, state.loading, state.end]);
 
   return (
     <div className="app-wrapper">
       <h1>
         <span>Infinate Scroll Post List</span>
       </h1>
-      {posts.map((post: Post) => (
+      {(state.posts as Array<Post>).map(post => (
         <UnmountHiddenWrapper key={post.id}>
           <PostItem
             title={post.title}
@@ -61,9 +52,11 @@ function App() {
           />
         </UnmountHiddenWrapper>
       ))}
-      <div ref={loadingRef} className="loading">
-        {loading && "Loading..."}
+      <div ref={loadingRef} className="message">
+        {state.loading && "Loading..."}
       </div>
+      {state.end && <div className="message">No more posts to show!</div>}
+      {state.error && <div className="message error">{state.error}</div>}
     </div>
   );
 }
