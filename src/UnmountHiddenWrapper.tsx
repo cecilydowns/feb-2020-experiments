@@ -7,10 +7,10 @@ interface Props {
 const UnmountHiddenWrapper = ({ children }: Props) => {
   const [visible, setVisible] = useState(true);
   const [style, setStyle] = useState({});
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (ref && ref.current) {
+    if (containerRef && containerRef.current) {
       const callback = (entries: any) => {
         entries.forEach((entry: any) => {
           if (entry.intersectionRatio * 100 > 0) {
@@ -26,14 +26,14 @@ const UnmountHiddenWrapper = ({ children }: Props) => {
         threshold: [0, 1]
       });
 
-      observer.observe(ref.current);
+      observer.observe(containerRef.current);
 
-      setStyle({ minHeight: `${ref.current.offsetHeight}px` });
+      setStyle({ minHeight: `${containerRef.current.offsetHeight}px` });
     }
   }, []);
 
   return (
-    <div ref={ref} style={style}>
+    <div ref={containerRef} style={style}>
       {visible && children}
     </div>
   );
