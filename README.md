@@ -1,6 +1,12 @@
 ## February 2020 Experiments
 
-This project contains a few of the coding things I've been experimenting with recently, including Typescript, post-style CSS styling, lazy loading of components with [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy), and an infinate scroll feature that makes use of the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to improve performance.
+This project contains a few of my recent React experiments with lazy loading and infinate scroll.
+
+Lazy loading components using [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy) allows for splitting a component and any dependencies into a separate JavaScript chunk that is loaded only on demand - in my example, a JavaScript animation library that shows when no more items are available.
+
+I've used the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) for the infinate scroll feature, which includes features beyond what we could get with an event listener and has a polyfill that can be used to support older browsers. Besides detecting when to load more posts, an Intersection Observer is used in the `UmountHiddenWrapper` component to unmount children that are not visible to the user and improve performance.
+
+Other areas of experimentation include TypeScript, CSS styling, and state management with an asynchronous call and useReducer.
 
 ## Codesandbox
 
