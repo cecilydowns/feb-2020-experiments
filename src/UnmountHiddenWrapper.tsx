@@ -4,6 +4,9 @@ interface Props {
   children: any;
 }
 
+// To improve performance, this wrapper component unmounts children that
+// are not near the visible viewport, while using the wrapper as a
+// placeholder with the same height as the unmounted element.
 const UnmountHiddenWrapper = ({ children }: Props) => {
   const [visible, setVisible] = useState(true);
   const [style, setStyle] = useState({});

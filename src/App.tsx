@@ -6,6 +6,7 @@ import PostItem from "./PostItem";
 import Loading from "./Loading";
 import { reducer, initialState } from "./reducer";
 import { Post } from "./types";
+// Lazy loading components we don't need right away
 const ErrorMessage = React.lazy(() => import("./ErrorMessage"));
 const PostEndMessage = React.lazy(() => import("./PostEndMessage"));
 
@@ -15,12 +16,14 @@ function App() {
 
   useEffect(() => {
     if (loadingRef && loadingRef.current && !state.loading && !state.end) {
+      // Setting up IntersectionObserver to fetch posts when user nears page end
       const observer = new IntersectionObserver(
         (entries: any) => {
           entries.forEach((entry: any) => {
             if (entry.intersectionRatio === 1) {
               getPosts(dispatch, state.nextPage, 5);
               if (loadingRef.current !== null) {
+                // Unobserving to prevent duplicate api calls
                 observer.unobserve(loadingRef.current);
               }
             }
@@ -31,7 +34,6 @@ function App() {
           threshold: [1]
         }
       );
-
       observer.observe(loadingRef.current);
     }
   }, [dispatch, state.nextPage, state.loading, state.end]);
@@ -48,7 +50,6 @@ function App() {
             body={post.body}
             author={post.author}
             avatar={post.avatar}
-            createdAt={post.createdAt}
           />
         </UnmountHiddenWrapper>
       ))}

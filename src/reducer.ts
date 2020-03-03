@@ -4,7 +4,7 @@ import {
   POSTS_END,
   POSTS_FAILURE
 } from "./constants";
-import { State } from "./types";
+import { State, Action } from "./types";
 
 export const initialState = {
   posts: [],
@@ -14,7 +14,7 @@ export const initialState = {
   error: ""
 };
 
-export const reducer = (state: State, action: any) => {
+export const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case POSTS_REQUEST:
       return { ...state, loading: true };

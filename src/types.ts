@@ -14,3 +14,8 @@ export type Post = {
   title: string;
   body: string;
 };
+
+export type Action = {
+  type: "POSTS_REQUEST" | "POSTS_SUCCESS" | "POSTS_END" | "POSTS_FAILURE";
+  payload?: any;
+};
